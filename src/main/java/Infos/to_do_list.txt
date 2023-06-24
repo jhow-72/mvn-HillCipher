@@ -1,0 +1,20 @@
+para decodificar:
+    0. criar hashmap de alfabeto
+        0.1. encript a: 0, b:1, c:2, .... z:25
+            -> transformar o texto cifrado em numeros usando esse dicionario
+        0.2. depript 0: a, 1:b, 2:c, .... 25:z
+    1. criar um loop que gere todos as chaves possiveis
+        1.1. validar se eh uma matriz inversivel, se nao for, jogar fora
+        1.1. pegar matriz inversa (A-) da matriz chave (A)
+        1.2. pegar determinante de A -> (detA)
+        1.3. descobrir inverso multiplicativo modular (I) de detA
+            3.1. detA * I * mod26 = 1
+        1.4. para descobrir a matriz chave decodificadora (AD), fazer: I*(A-)mod26
+        1.6. decodificar:
+            5.1. pegar todas as letras do texto cifrado
+            5.2 dividir em matrizes  1x2 dentro de um array
+            5.3 fazer um loop que realize: AD*array[i]
+                5.3.1 a partir da matriz 1x2 gerada, aplique mod26
+                5.3.2 use o alfabeto decrip do step 0.2 para transformar os numeros em letras
+                5.3.3 escreva as letrar em uma linha em um arquivo
+        1.7 quando o loop terminar, quebrar a linha
