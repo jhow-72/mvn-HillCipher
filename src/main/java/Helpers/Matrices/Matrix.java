@@ -83,6 +83,15 @@ public class Matrix {
         return matrix;
     }
 
+    public String getStringMatrix() {
+        int value1 = new BigDecimal(this.matrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value2 = new BigDecimal(this.matrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value3 = new BigDecimal(this.matrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value4 = new BigDecimal(this.matrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
+
+        return String.format("[[%d, %d], [%d, %d]", value1, value2, value3, value4);
+    }
+
     public RealMatrix getInverseMatrix() {
         return inverseMatrix;
     }

@@ -18,16 +18,22 @@ public class TransformedTextWriter {
         this.filename = filename;
     }
 
-    public void writeTransformedText(List<Matrix> matrixList, RealMatrix matrixCipheredNums, TextTrasnformer textTransformer, BigDecimal module26) {
+    public void writeListTransformedText(List<Matrix> allPossibleDecoderMatrixList, RealMatrix matrixCipheredNums, TextTrasnformer textTransformer, BigDecimal module26) {
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (Matrix matrix : matrixList) {
-                String transformedText = new MatrixCipherProcessor(matrix, textTransformer, module26).decodeCipheredNums(matrixCipheredNums);
+            for (Matrix decoderMatrix : allPossibleDecoderMatrixList) {
+                String initial = decoderMatrix.getStringMatrix()+" -> "; // a matriz retornada aqui eh a chave publica
+
+                // cria um processador de matrizes e ja chama o metodo que tenta usar a matriz decodificadora da iteracao para decodificar a matriz de numeros
+                String transformedText = new MatrixCipherProcessor(decoderMatrix, textTransformer, module26, initial).decodeCipheredNums(matrixCipheredNums);
+
                 writer.write(transformedText);
                 writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
 
