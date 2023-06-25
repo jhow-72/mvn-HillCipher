@@ -25,8 +25,10 @@ public class MatrixCipherProcessor {
      * @param matrixCipheredNums A matriz contendo os números cifrados
      * @return O texto transformado
      */
-    public String processCipheredNums(RealMatrix matrixCipheredNums) {
+    public String decodeCipheredNums(RealMatrix matrixCipheredNums) {
         StringBuilder transformedText = new StringBuilder();
+        String initial = matrix.getStringDecodeMatrix()+" -> ";
+        transformedText.append(initial);
         int numRows = matrixCipheredNums.getRowDimension();
         int numCols = matrixCipheredNums.getColumnDimension();
 
