@@ -1,4 +1,4 @@
-package Math;
+package Helpers.Math;
 
 import org.apache.commons.math3.linear.*;
 
