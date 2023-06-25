@@ -1,5 +1,6 @@
 package Helpers.Matrices;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -12,6 +13,8 @@ public class Matrix {
     private int invMulplicativoModular;
     private boolean isValid;
 
+    private RealMatrix decodeMatrix;
+
     public Matrix(RealMatrix matrix){
         this.matrix = matrix;
         this.isInvertible =  inversibleCheck();
@@ -21,6 +24,8 @@ public class Matrix {
             this.invMulplicativoModular = calcInvMulplicativoModular();
         }
         isValid = (this.invMulplicativoModular != -1 && this.isInvertible);
+        if(isValid)
+            setDecodeMatrix();
     }
 
     private int calcDeterminat() {
@@ -39,17 +44,28 @@ public class Matrix {
     }
 
     private int calcInvMulplicativoModular() {
+        // (detA * I)mod26 = 1 -> "I" eh o inverso multiplicativo
         int mod = 26;
         int inv = -1;
         for(int i=1; i<10000; i++){
             double result = (this.determinant*i)%mod;
             if(result==1){
                 inv = i;
-                System.out.println("fez o break!!");
                 break;
             }
         }
         return inv;
+    }
+
+    private void setDecodeMatrix() {
+        // I*A- mod26
+        this.decodeMatrix = new Array2DRowRealMatrix(2,2);
+        for (int i = 0; i < this.inverseMatrix.getRowDimension(); i++) {
+            for (int j = 0; j < this.inverseMatrix.getColumnDimension(); j++) {
+                double value = this.invMulplicativoModular * this.inverseMatrix.getEntry(i, j);
+                this.decodeMatrix.setEntry(i, j, value);
+            }
+        }
     }
 
     public boolean isInvertible() {
@@ -74,5 +90,9 @@ public class Matrix {
 
     public boolean isValid() {
         return isValid;
+    }
+
+    public RealMatrix getDecodeMatrix() {
+        return decodeMatrix;
     }
 }

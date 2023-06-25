@@ -24,6 +24,9 @@ public class TextTrasnformer {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 double value = matrix.getEntry(i, j);
+                if(value<0){
+                    value += 26;
+                }
                 output+=dec2alf.get(Double.valueOf(value).intValue()); // Converte o valor numérico em um caractere e concatena na string output
             }
         }
