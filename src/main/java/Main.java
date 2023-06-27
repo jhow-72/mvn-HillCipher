@@ -1,16 +1,13 @@
-import Helpers.Matrices.Matrix;
-import Helpers.Matrices.MatrixGenerator;
-import Helpers.Strings.TextEncripted;
-import Helpers.Strings.TextTrasnformer;
-import Helpers.Writers.TransformedTextWriter;
-import org.apache.commons.math3.linear.RealMatrix;
+import Helpers.Filter.StringAnalyzer;
+import Helpers.Readers.TransformedTextReader;
+import Helpers.Strings.TextParser;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public class Main {
 
-//    Esse eh o main para testo com o texto00
+//    Esse eh o main para teste com o texto00
 //    public static void main(String[] args){
 //        BigDecimal module26 = new BigDecimal(26);
 //        String cipherText = new TextEncripted().getTextContent("/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo00_texto_cifrado.txt");
@@ -31,19 +28,35 @@ public class Main {
 //        System.out.println(transformedText);
 //    }
 
-//    esse eh o main para o texto desconhecido
     public static void main(String[] args){
         BigDecimal module26 = new BigDecimal(26);
-        String cipherText = new TextEncripted().getTextContent("/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo00_texto_cifrado.txt");
 
-        TextTrasnformer textTrasnformer = new TextTrasnformer();
-        RealMatrix matrixCipheredNums = textTrasnformer.transformCharsToNums(cipherText);
+//        String cipherText00Path = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo00_texto_cifrado.txt";
+//        String cipherText08Path = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo08_texto_cifrado.txt";
+//
+//        String cipherText = new TextEncripted().getTextContent(cipherText08Path);
+//
+//        TextTrasnformer textTransformer = new TextTrasnformer();
+//        RealMatrix matrixCipheredNums = textTransformer.transformCharsToNums(cipherText);
+//
+//        List<Matrix> allPossibleDecoderMatrixList = new MatrixGenerator().getMatrixList();
 
-        List<Matrix> allPossibleDecoderMatrixList = new MatrixGenerator().getMatrixList();
+        String output00FilePath = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Outputs/Output00.txt";
+        String output08FilePath = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Outputs/Output08.txt";
 
-        String outputFileName = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Output.txt";
-        TransformedTextWriter transformedTextWriter = new TransformedTextWriter(outputFileName);
-        transformedTextWriter.writeListTransformedText(allPossibleDecoderMatrixList, matrixCipheredNums, textTrasnformer, module26);
+//        TransformedTextWriter transformedTextWriter = new TransformedTextWriter(output08FilePath);
+//        transformedTextWriter.writeListTransformedText(allPossibleDecoderMatrixList, matrixCipheredNums, textTransformer, module26);
 
+
+        List<String> possibleTexts = new TransformedTextReader().getAllLineStrings(output00FilePath);
+
+        String caminhoPolicarpoQuaresma = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/policarpo_quaresma.txt";
+        String policarpoParseado = new TextParser().parse(caminhoPolicarpoQuaresma);
+
+        String caminhoOutputStringAnalyzer = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Outputs/OutputStringAnalyzer.txt";
+
+        for(String text : possibleTexts){
+            new StringAnalyzer().run(policarpoParseado, text, caminhoOutputStringAnalyzer);
+        }
     }
 }
