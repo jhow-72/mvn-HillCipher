@@ -15,14 +15,15 @@ public class Matrix {
     private boolean isValid;
     private BigInteger modulus;
     private RealMatrix decodeMatrix;
+    private Integer intmax = Integer.MAX_VALUE;
 
     public Matrix(RealMatrix matrix, int modulus){
         this.realMatrix = matrix;
         this.modulus = BigInteger.valueOf(modulus);
         this.isInvertible =  inversibleCheck();
         if(this.isInvertible) {
-            this.determinant = calcDeterminat();
             this.inverseMatrix = calcInverseMatrix();
+            this.determinant = calcDeterminant();
             this.invMulplicativoModular = calcInvMulplicativoModular().intValue();
         }
         isValid = (this.isInvertible && this.invMulplicativoModular!=-1);
@@ -30,14 +31,19 @@ public class Matrix {
             setDecodeMatrix();
     }
 
-    private BigInteger calcDeterminat() {
+    private BigInteger calcDeterminant() {
         LUDecomposition luDecomposition = new LUDecomposition(realMatrix);
+        BigInteger determinant = new BigInteger(String.valueOf(Math.round(luDecomposition.getDeterminant())));
         return new BigInteger(String.valueOf(Math.round(luDecomposition.getDeterminant())));
     }
 
     private RealMatrix calcInverseMatrix() {
-        LUDecomposition decomposition = new LUDecomposition(this.realMatrix);
-        return decomposition.getSolver().getInverse();
+        RealMatrix inverse = MatrixUtils.createRealMatrix(2, 2);
+        inverse.setEntry(0, 0, this.realMatrix.getEntry(1, 1));
+        inverse.setEntry(0, 1, -this.realMatrix.getEntry(0, 1));
+        inverse.setEntry(1, 0, -this.realMatrix.getEntry(1, 0));
+        inverse.setEntry(1, 1, this.realMatrix.getEntry(0, 0));
+        return inverse;
     }
 
     private boolean inversibleCheck() {
@@ -58,8 +64,14 @@ public class Matrix {
         this.decodeMatrix = new Array2DRowRealMatrix(2,2);
         for (int i = 0; i < this.inverseMatrix.getRowDimension(); i++) {
             for (int j = 0; j < this.inverseMatrix.getColumnDimension(); j++) {
-                double entryDouble = new BigDecimal(String.valueOf(this.inverseMatrix.getEntry(i, j))).doubleValue();
+                double entryDouble = new BigDecimal(String.valueOf(this.inverseMatrix.getEntry(i, j))).setScale(2, RoundingMode.HALF_UP).doubleValue();
                 double value = this.invMulplicativoModular*entryDouble;
+
+                value = value%26;
+                if(value<0){
+                    value += 26;
+                }
+
                 this.decodeMatrix.setEntry(i, j, value);
             }
         }
@@ -77,15 +89,6 @@ public class Matrix {
         return realMatrix;
     }
 
-    public String getStringMatrix() {
-        int value1 = new BigDecimal(this.realMatrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value2 = new BigDecimal(this.realMatrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value3 = new BigDecimal(this.realMatrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value4 = new BigDecimal(this.realMatrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
-
-        return String.format("[[%d, %d], [%d, %d]", value1, value2, value3, value4);
-    }
-
     public RealMatrix getInverseMatrix() {
         return inverseMatrix;
     }
@@ -101,12 +104,25 @@ public class Matrix {
     public RealMatrix getDecodeMatrix() {
         return decodeMatrix;
     }
-    public String getStringDecodeMatrix() {
-        int value1 = new BigDecimal(this.decodeMatrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value2 = new BigDecimal(this.decodeMatrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value3 = new BigDecimal(this.decodeMatrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value4 = new BigDecimal(this.decodeMatrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
 
-        return String.format("[[%d, %d], [%d, %d]", value1, value2, value3, value4);
+    public String getStringDecodeMatrix() {
+        return getStringMatrix(this.decodeMatrix);
+    }
+
+    public String getStringMatrix() {
+        return getStringMatrix(this.realMatrix);
+    }
+
+    public String getStringInverseMatrix() {
+        return getStringMatrix(this.inverseMatrix);
+    }
+
+    private String getStringMatrix(RealMatrix matrix){
+        int value1 = new BigDecimal(matrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value2 = new BigDecimal(matrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value3 = new BigDecimal(matrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value4 = new BigDecimal(matrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
+
+        return String.format("[[%d, %d], [%d, %d]]", value1, value2, value3, value4);
     }
 }
