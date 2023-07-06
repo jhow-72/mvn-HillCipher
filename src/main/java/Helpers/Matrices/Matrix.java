@@ -1,63 +1,62 @@
 package Helpers.Matrices;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 public class Matrix {
     private boolean isInvertible;
-    private int determinant;
-    private RealMatrix matrix;
+    private BigInteger determinant;
+    private RealMatrix realMatrix;
     private RealMatrix inverseMatrix;
     private int invMulplicativoModular;
     private boolean isValid;
-
+    private BigInteger modulus;
     private RealMatrix decodeMatrix;
+    private Integer intmax = Integer.MAX_VALUE;
 
-    public Matrix(RealMatrix matrix){
-        this.matrix = matrix;
+    public Matrix(RealMatrix matrix, int modulus){
+        this.realMatrix = matrix;
+        this.modulus = BigInteger.valueOf(modulus);
         this.isInvertible =  inversibleCheck();
         if(this.isInvertible) {
-            this.determinant = calcDeterminat();
             this.inverseMatrix = calcInverseMatrix();
-            this.invMulplicativoModular = calcInvMulplicativoModular();
+            this.determinant = calcDeterminant();
+            this.invMulplicativoModular = calcInvMulplicativoModular().intValue();
         }
-        isValid = (this.invMulplicativoModular != -1 && this.isInvertible);
+        isValid = (this.isInvertible && this.invMulplicativoModular!=-1);
         if(isValid)
             setDecodeMatrix();
     }
 
-    private int calcDeterminat() {
-        LUDecomposition luDecomposition = new LUDecomposition(matrix);
-        return (int) Math.round(luDecomposition.getDeterminant());
-
+    private BigInteger calcDeterminant() {
+        LUDecomposition luDecomposition = new LUDecomposition(realMatrix);
+        BigInteger determinant = new BigInteger(String.valueOf(Math.round(luDecomposition.getDeterminant())));
+        return new BigInteger(String.valueOf(Math.round(luDecomposition.getDeterminant())));
     }
 
     private RealMatrix calcInverseMatrix() {
-        return MatrixUtils.blockInverse(this.matrix, 0);
+        RealMatrix inverse = MatrixUtils.createRealMatrix(2, 2);
+        inverse.setEntry(0, 0, this.realMatrix.getEntry(1, 1));
+        inverse.setEntry(0, 1, -this.realMatrix.getEntry(0, 1));
+        inverse.setEntry(1, 0, -this.realMatrix.getEntry(1, 0));
+        inverse.setEntry(1, 1, this.realMatrix.getEntry(0, 0));
+        return inverse;
     }
 
     private boolean inversibleCheck() {
-        LUDecomposition luDecomposition = new LUDecomposition(this.matrix);
+        LUDecomposition luDecomposition = new LUDecomposition(this.realMatrix);
         return luDecomposition.getSolver().isNonSingular();
     }
 
-    private int calcInvMulplicativoModular() {
-        // (detA * I)mod26 = 1 -> "I" eh o inverso multiplicativo
-        int mod = 26;
-        int inv = -1;
-        for(int i=1; i<10000; i++){
-            double result = (this.determinant*i)%mod;
-            if(result==1){
-                inv = i;
-                break;
-            }
+    private BigInteger calcInvMulplicativoModular() {
+        try {
+            return new BigInteger(String.valueOf(this.determinant)).modInverse(this.modulus);
+        }catch (Exception e){
+            return BigInteger.valueOf(-1);
         }
-        return inv;
     }
 
     private void setDecodeMatrix() {
@@ -65,7 +64,14 @@ public class Matrix {
         this.decodeMatrix = new Array2DRowRealMatrix(2,2);
         for (int i = 0; i < this.inverseMatrix.getRowDimension(); i++) {
             for (int j = 0; j < this.inverseMatrix.getColumnDimension(); j++) {
-                double value = this.invMulplicativoModular * this.inverseMatrix.getEntry(i, j);
+                double entryDouble = new BigDecimal(String.valueOf(this.inverseMatrix.getEntry(i, j))).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                double value = this.invMulplicativoModular*entryDouble;
+
+                value = value%26;
+                if(value<0){
+                    value += 26;
+                }
+
                 this.decodeMatrix.setEntry(i, j, value);
             }
         }
@@ -75,12 +81,12 @@ public class Matrix {
         return isInvertible;
     }
 
-    public int getDeterminant() {
+    public BigInteger getDeterminant() {
         return determinant;
     }
 
-    public RealMatrix getMatrix() {
-        return matrix;
+    public RealMatrix getRealMatrix() {
+        return realMatrix;
     }
 
     public RealMatrix getInverseMatrix() {
@@ -98,12 +104,25 @@ public class Matrix {
     public RealMatrix getDecodeMatrix() {
         return decodeMatrix;
     }
-    public String getStringDecodeMatrix() {
-        int value1 = new BigDecimal(this.decodeMatrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value2 = new BigDecimal(this.decodeMatrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value3 = new BigDecimal(this.decodeMatrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
-        int value4 = new BigDecimal(this.decodeMatrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
 
-        return String.format("[[%d, %d], [%d, %d]", value1, value2, value3, value4);
+    public String getStringDecodeMatrix() {
+        return getStringMatrix(this.decodeMatrix);
+    }
+
+    public String getStringMatrix() {
+        return getStringMatrix(this.realMatrix);
+    }
+
+    public String getStringInverseMatrix() {
+        return getStringMatrix(this.inverseMatrix);
+    }
+
+    private String getStringMatrix(RealMatrix matrix){
+        int value1 = new BigDecimal(matrix.getEntry(0,0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value2 = new BigDecimal(matrix.getEntry(0,1)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value3 = new BigDecimal(matrix.getEntry(1, 0)).setScale(2, RoundingMode.HALF_UP).intValue();
+        int value4 = new BigDecimal(matrix.getEntry(1, 1)).setScale(2, RoundingMode.HALF_UP).intValue();
+
+        return String.format("[[%d, %d], [%d, %d]]", value1, value2, value3, value4);
     }
 }
