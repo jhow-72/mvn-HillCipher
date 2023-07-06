@@ -20,7 +20,7 @@ public class MatrixGenerator {
                                 {c, d}
                         };
 
-                        Matrix matrix = new Matrix(new Array2DRowRealMatrix(data));
+                        Matrix matrix = new Matrix(new Array2DRowRealMatrix(data), modulus);
                         if (matrix.isValid()){
                             this.matrixList.add(matrix);
                         }
@@ -31,9 +31,9 @@ public class MatrixGenerator {
         return this.matrixList;
     }
 
-    public List<Matrix> getMatrixList() {
+    public List<Matrix> getMatrixList(BigDecimal module26) {
         if(this.matrixList.isEmpty())
-            generateAllPossibleValidMatrices(BigDecimal.valueOf(26).intValue());
+            generateAllPossibleValidMatrices(module26.intValue());
 
         return matrixList;
     }

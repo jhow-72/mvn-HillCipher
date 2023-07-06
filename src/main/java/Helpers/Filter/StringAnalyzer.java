@@ -1,28 +1,28 @@
 package Helpers.Filter;
 
-import Helpers.Strings.TextParser;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.HashMap;
 
 public class StringAnalyzer {
-    static final  String PolicarpoPath = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Infos/Texto_conhecido/policarpo_quaresma.txt";
-    static final  String OutputPath = "/Users/jhonatansantos/Documents/USP/S-7/Seguranca/EP/mvn_hill_cipher/src/main/java/Outputs/output_string_analyzer.txt";
+    static final  String OutputPath = "src/main/java/Outputs/OutputStringAnalyzer.txt";
 
-    public void run(String possibleText, String key) {
-        String policarpoParseado = new TextParser().parse(StringAnalyzer.PolicarpoPath);
+    public void run(HashMap<String, String> stringsEChaves, String policarpoParseado) {
+        BigInteger contadorIteracoesPorChave = BigInteger.ZERO;
 
 //         Compare substrings of both texts, considering 100 characters at a time
         for (int i = 0; i < policarpoParseado.length() - 100; i++) {
+            contadorIteracoesPorChave =contadorIteracoesPorChave.add(BigInteger.ONE);
             String substring = policarpoParseado.substring(i, i + 100);
 //            System.out.println(substring+" ------------ "+possibleText);
-            if (substring.equals(possibleText)) {
+            if (stringsEChaves.containsKey(substring)) {
                 System.out.println("achou!");
-
-                String result = key+" -> "+possibleText;
+                System.out.println("total de iteraçoes pela chave correta: " + contadorIteracoesPorChave);
+                String result = stringsEChaves.get(substring)+" -> "+substring;
                 gravaNoArquivo(result, StringAnalyzer.OutputPath);
-
+                System.out.println(result);
                 System.exit(0);
             }
         }

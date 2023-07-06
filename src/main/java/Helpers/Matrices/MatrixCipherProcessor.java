@@ -53,6 +53,12 @@ public class MatrixCipherProcessor {
                 // essa multiplicacao decodifica os numeros codificados, restando apenas tirar os modulos deles mais a frente
                 RealMatrix temp = new Array2DRowRealMatrix(cipherEntryPair);
                 temp = matrix.getDecodeMatrix().multiply(temp);
+//                if(matrix.getStringMatrix().equals("[[2, 13], [1, 7]]")){
+//                    System.out.println(matrix.getStringMatrix());
+//                    System.out.println(matrix.getInverseMatrix());
+//                    System.out.println(matrix.getStringDecodeMatrix());
+//                    System.out.println(matrix.getInvMulplicativoModular());
+//                }
 
                 // separa os valores, agora multiplicados pela matriz decodificadora, double novamente,
                 // transforma eles em BigDecimal para realizar operacoes mais precisas
