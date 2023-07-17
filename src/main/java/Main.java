@@ -16,15 +16,17 @@ import java.util.List;
 
 public class Main {
     static final  String PolicarpoPath = "src/main/java/Infos/Texto_conhecido/policarpo_quaresma.txt";
-    static final String PolicarpoParseadoPath = "src/main/java/Outputs/PolicarpoParseadoLeoPath.txt";
+    static final String PolicarpoParseadoPath = "src/main/java/Outputs/PolicarpoParseado.txt";
     static final  String cipherText00Path = "src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo00_texto_cifrado.txt";
     static final  String cipherText08Path = "src/main/java/Infos/Texto_conhecido/Cifrado/Hill/Grupo08_texto_cifrado.txt";
     static final  String outputFile00Path = "src/main/java/Outputs/Output00.txt";
     static final  String outputFile08Path = "src/main/java/Outputs/Output08.txt";
 
+    // rode apenas os referentes ao grupo 00 ou ao grupo 08, se rodar ambos juntos, n ira funcionar
+    // o motivo disso eh porque o programa para ao encontrar a chave e o texto aberto
     public static void main(String[] args){
-        fazDecodificacao(cipherText00Path, outputFile00Path);
-        procuraTextoAberto(outputFile00Path);
+//        fazDecodificacao(cipherText00Path, outputFile00Path);
+//        procuraTextoAberto(outputFile00Path);
 
         fazDecodificacao(cipherText08Path, outputFile08Path);
         procuraTextoAberto(outputFile08Path);
@@ -39,7 +41,6 @@ public class Main {
         RealMatrix matrixCipheredNums = textTransformer.transformCharsToNums(cipherText);
 
         List<Matrix> allPossibleDecoderMatrixList = new MatrixGenerator().getMatrixList(module26);
-        System.out.println("length of allPossibleDecoderMatrixList: "+ allPossibleDecoderMatrixList.size());
 
         TransformedTextWriter transformedTextWriter = new TransformedTextWriter(outputFilePath);
         transformedTextWriter.writeListTransformedText(allPossibleDecoderMatrixList, matrixCipheredNums, textTransformer, module26);
@@ -48,6 +49,7 @@ public class Main {
     private static void procuraTextoAberto(String sourceStringsFilePath) {
         BigInteger contadorChavesAdicionadas = BigInteger.ZERO;
 
+//        caso nao tenha o arquivo do policarpoParseado, comente a chamada do lerPolicarpo e rode a linha abaixo q faz o parse
 //        String policarpoParseado = new TextParser().parse(Main.PolicarpoPath);
         String policarpoParseado = lerPolicarpo();
 
@@ -67,7 +69,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("F");
         System.out.println("chaves tentadas: " + contadorChavesAdicionadas);
     }
 
@@ -80,14 +81,5 @@ public class Main {
             e.printStackTrace();
         }
         return content.toString();
-    }
-    private static void comparaPolicarpos(String policarpoParseado) {
-        String PolicarpoParseadoLeoPath = "J:\\jhow_\\Documents\\USP\\Semestres\\Semestre_7\\Seguranca\\EP\\mvn-HillCipher\\src\\main\\java\\Outputs\\PolicarpoParseadoLeoPath.txt";
-        try(BufferedReader reader = new BufferedReader(new FileReader(PolicarpoParseadoLeoPath))){
-            String policarpoParseadoLeo = reader.readLine();
-            System.out.println(policarpoParseado.equals(policarpoParseadoLeo));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 }
