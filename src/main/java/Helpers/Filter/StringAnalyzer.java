@@ -10,16 +10,15 @@ public class StringAnalyzer {
     static final  String OutputPath = "src/main/java/Outputs/OutputStringAnalyzer.txt";
 
     public void run(HashMap<String, String> stringsEChaves, String policarpoParseado) {
-        BigInteger contadorIteracoesPorChave = BigInteger.ZERO;
+        BigInteger contadorIteracoes = BigInteger.ZERO;
 
-//         Compare substrings of both texts, considering 100 characters at a time
+        // compara as substrings do arquivo com o livro 100 chars por vez
         for (int i = 0; i < policarpoParseado.length() - 100; i++) {
-            contadorIteracoesPorChave =contadorIteracoesPorChave.add(BigInteger.ONE);
+            contadorIteracoes = contadorIteracoes.add(BigInteger.ONE);
             String substring = policarpoParseado.substring(i, i + 100);
-//            System.out.println(substring+" ------------ "+possibleText);
             if (stringsEChaves.containsKey(substring)) {
                 System.out.println("achou!");
-                System.out.println("total de iteraçoes pela chave correta: " + contadorIteracoesPorChave);
+                System.out.println("total de iteraçoes ateh a chave correta: " + contadorIteracoes);
                 String result = stringsEChaves.get(substring)+" -> "+substring;
                 gravaNoArquivo(result, StringAnalyzer.OutputPath);
                 System.out.println(result);

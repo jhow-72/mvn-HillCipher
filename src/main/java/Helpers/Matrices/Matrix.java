@@ -15,7 +15,6 @@ public class Matrix {
     private boolean isValid;
     private BigInteger modulus;
     private RealMatrix decodeMatrix;
-    private Integer intmax = Integer.MAX_VALUE;
 
     public Matrix(RealMatrix matrix, int modulus){
         this.realMatrix = matrix;
